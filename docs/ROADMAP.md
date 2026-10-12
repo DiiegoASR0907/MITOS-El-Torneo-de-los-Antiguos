@@ -8,6 +8,7 @@
 - [x] Barras de vida y energía.
 - [x] Rival controlado por IA sencilla.
 - [x] Controles táctiles básicos.
+- [x] Bloqueo defensivo con teclado y controles táctiles.
 - [ ] Probar y ajustar equilibrio, alcance y dificultad en distintos dispositivos.
 
 ## Fase 2 — Identidad visual
