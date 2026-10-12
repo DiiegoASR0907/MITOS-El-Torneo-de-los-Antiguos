@@ -69,16 +69,19 @@ function drawF(f){
   x.save();x.translate(f.x,f.y);x.scale(f.face,1);
   const B=f.character?.id==='bigfoot'||f.character?.id!=='chupacabras'&&f.character?.name==='Bigfoot';
   const ch=f.character||{},main=ch.main||(B?'#62402e':'#25364f'),light=ch.light||(B?'#b27a4c':'#a8f2dc'),dark=ch.dark||(B?'#30202a':'#11182f'),glow=ch.glow||(B?'#ffbc69':'#ff426e');
-  const moving=Math.abs(f.vx)>.8&&f.ground,run=moving?Math.sin(f.walk*2.6):0,bob=f.ground?(moving?Math.abs(run)*2:Math.sin(frame*.045+f.x*.02)*1.3):0;
-  const jumping=!f.ground,attacking=f.attack>0,special=attacking&&f.type==='special',swing=attacking?(special?1.18:.72):0;
-  const lean=jumping?-.12:(attacking?-.15:0);
+  const moving=Math.abs(f.vx)>.8&&f.ground,run=moving?Math.sin(f.walk*2.6):0;
+  const jumping=!f.ground,attacking=f.attack>0,special=attacking&&f.type==='special';
+  const attackPhase=attacking?Math.sin((f.attack/(special?25:14))*Math.PI):0;
+  const bob=f.ground?(moving?Math.abs(run)*2.8:Math.sin(frame*.055+f.x*.02)*1.8):0;
+  const swing=attacking?(special?1.18:.72):0;
+  const lean=jumping?-.19:(attacking?-.12-.18*attackPhase:(moving?run*.035:Math.sin(frame*.04+f.x*.02)*.012));
   x.translate(0,bob);x.rotate(lean);
   // Sombra y pose defensiva
   x.globalAlpha=.32;x.fillStyle='#000';x.beginPath();x.ellipse(0,4,jumping?31:45,8,0,0,Math.PI*2);x.fill();x.globalAlpha=1;
   if(special){x.save();x.globalAlpha=.22+.12*Math.sin(frame*.7);x.strokeStyle=glow;x.lineWidth=5;x.beginPath();x.ellipse(-5,-f.h*.52,48+Math.sin(frame*.4)*7,f.h*.62,0,0,Math.PI*2);x.stroke();x.globalAlpha=.65;x.lineWidth=2;x.beginPath();x.ellipse(-5,-f.h*.52,59,f.h*.72,frame*.015,0,Math.PI*2);x.stroke();x.restore()}
   if(f.blocking){x.save();x.globalAlpha=.22;x.fillStyle='#65eaff';x.beginPath();x.ellipse(17,-f.h*.54,35,f.h*.6,0,0,Math.PI*2);x.fill();x.globalAlpha=.9;x.strokeStyle='#65eaff';x.lineWidth=3;x.beginPath();x.arc(17,-f.h*.54,36,-1.25,1.25);x.stroke();x.restore()}
   // Piernas articuladas: reposo, carrera y salto
-  const legSwing=moving?run*10:0, knee=jumping?-9:0;
+  const legSwing=moving?run*13:0, knee=jumping?-13:(attacking?-4:0);
   x.lineCap='round';x.lineJoin='round';
   for(let side=-1;side<=1;side+=2){
     const hipX=side*13,hipY=-31,footX=hipX+side*3+(side===1?legSwing:-legSwing),footY=-4+knee+(moving?Math.max(0,side*run)*-5:0);
@@ -111,10 +114,10 @@ function drawF(f){
   const armBack=f.blocking?-.2:(jumping?-.65:-.1),armFront=f.blocking?-.75:(attacking?-.2-swing*.8:.22+run*.16);
   for(const side of [-1,1]){
     const isFront=side===1,shoulderX=side*20,shoulderY=-f.h*.68;
-    let elbowX=shoulderX+side*(isFront?13:10),elbowY=shoulderY+ (isFront?14:18);
-    let handX=elbowX+side*(isFront?13:9),handY=elbowY+ (isFront?8:10);
-    if(isFront){elbowX+=attacking?18*swing:0;elbowY+=attacking?-7:0;handX+=attacking?37*swing:0;handY+=attacking?-13*swing:0}
-    else {elbowX+=jumping?-9:0;handY+=jumping?-10:0}
+    let elbowX=shoulderX+side*(isFront?13:10),elbowY=shoulderY+(isFront?14:18);
+    let handX=elbowX+side*(isFront?13:9),handY=elbowY+(isFront?8:10);
+    if(isFront){elbowX+=attacking?18*swing:0;elbowY+=attacking?-7-attackPhase*5:0;handX+=attacking?37*swing:0;handY+=attacking?-13*swing-attackPhase*5:0;}
+    else {elbowX+=jumping?-9:(moving?-run*5:0);handY+=jumping?-10:(attacking?-8:0);}
     x.strokeStyle=dark;x.lineWidth=B?17:12;x.beginPath();x.moveTo(shoulderX,shoulderY);x.lineTo(elbowX,elbowY);x.lineTo(handX,handY);x.stroke();
     x.strokeStyle=main;x.lineWidth=B?10:7;x.beginPath();x.moveTo(shoulderX,shoulderY);x.lineTo(elbowX,elbowY);x.lineTo(handX,handY);x.stroke();
     x.fillStyle=light;x.beginPath();x.arc(handX,handY,B?7:5,0,Math.PI*2);x.fill();
@@ -135,6 +138,23 @@ function drawF(f){
     x.fillStyle='#c9f8e9';x.beginPath();x.ellipse(3,headY-3,14,7,0,0,Math.PI*2);x.fill();
     x.fillStyle='#ff355f';x.shadowColor='#ff355f';x.shadowBlur=14;x.fillRect(3,headY-5,8,3);x.shadowBlur=0;
     for(let i=0;i<3;i++)poly([[12+i*5,headY+7],[15+i*5,headY+14],[17+i*5,headY+7]],'#fff0df',dark);
+  }
+  // Identidad de ataque: Bigfoot canaliza fuerza sísmica; Chupacabras concentra energía espinosa.
+  if(attacking){
+    x.save();
+    const charge=special?(0.45+Math.abs(Math.sin(frame*.35))*.55):.35;
+    x.globalAlpha=charge;
+    if(B){
+      x.strokeStyle=special?'#ffbd59':'#f7d08a';x.lineWidth=special?5:3;
+      x.beginPath();x.arc(34,-f.h*.48,special?34:20,-1.15,1.15);x.stroke();
+      if(special){x.fillStyle='#ffb84d';x.beginPath();x.ellipse(38,-f.h*.48,19+Math.sin(frame*.6)*4,13,0,0,Math.PI*2);x.fill();
+        for(let i=0;i<5;i++){const px=16+i*13;x.strokeStyle='#ffe0a0';x.lineWidth=2;x.beginPath();x.moveTo(px,-f.h*.38);x.lineTo(px+8,-f.h*.25);x.stroke()}}
+    }else{
+      x.strokeStyle=special?'#ff42d0':'#ff6a9a';x.lineWidth=special?4:2;
+      for(let i=0;i<(special?4:2);i++){x.beginPath();x.moveTo(20+i*3,-f.h*.5+i*5);x.quadraticCurveTo(45+i*7,-f.h*.5-12,66+i*8,-f.h*.48+i*7);x.stroke()}
+      if(special){x.fillStyle='#ff35c9';x.shadowColor='#ff35c9';x.shadowBlur=18;x.beginPath();x.arc(54,-f.h*.5,11+Math.sin(frame*.55)*3,0,Math.PI*2);x.fill();x.shadowBlur=0}
+    }
+    x.restore();
   }
   // Aura ocular y destellos
   x.fillStyle=glow;x.shadowColor=glow;x.shadowBlur=12;x.fillRect(5,headY-7,7,4);x.shadowBlur=0;
