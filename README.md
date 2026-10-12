@@ -36,3 +36,7 @@ Construir un juego de lucha accesible, con identidad visual anime, escenarios m�
 ## Estado
 
 Prototipo temprano: un escenario, un combate y una IA sencilla. Todavía no representa un juego comercial terminado.
+
+
+## Animación y efectos de combate
+La iteración actual añade impactos más expresivos, anillos de energía y partículas para ataques especiales, además de efectos diferenciados al bloquear. Consulta la [dirección de arte de personajes](./docs/DISENO_PERSONAJES.md) y la [hoja de ruta](./docs/ROADMAP.md). Las hojas de sprites finales siguen pendientes.
