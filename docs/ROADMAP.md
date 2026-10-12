@@ -18,7 +18,8 @@
 - [ ] Incorporar audio y efectos con licencia adecuada u originales.
 
 ## Fase 3 — Sistemas de lucha
-- [ ] Menú de selección de luchador.
+- [x] Menú de selección de luchador y rival entre 12 personajes.
+- [x] Perfiles, siglas y paletas de color vinculados a la selección.
 - [ ] Bloqueo, esquiva, combos y recuperación.
 - [ ] Rondas, temporizador y dificultad configurable.
 - [ ] Ajustes de controles, pausa y accesibilidad.
