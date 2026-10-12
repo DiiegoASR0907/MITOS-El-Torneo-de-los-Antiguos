@@ -14,7 +14,10 @@ El primer combate jugable enfrenta a **Bigfoot** contra **Chupacabras** en el Te
 - **W** o **↑:** saltar.
 - **J:** golpe.
 - **K:** ataque especial.
+- **L:** mantener para bloquear y reducir el daño recibido.
 - En pantallas táctiles aparecen controles en pantalla.
+
+En móvil, usa los botones táctiles; **DEFENSA** sirve para bloquear mientras lo mantienes pulsado.
 
 También puedes publicar el repositorio con GitHub Pages para jugar desde un enlace web.
 
