@@ -10,7 +10,7 @@ El prototipo permite elegir tanto al luchador como al rival entre **12 personaje
 
 - Abre **[index.html](./index.html)** en un navegador moderno.
 - Pulsa **Elegir personajes**, selecciona tu luchador y el rival, y después pulsa **Comenzar combate**. También puedes usar **Sorpréndeme** para recibir una pareja aleatoria.
-- Los sprites todavía son vectoriales provisionales; los perfiles y colores cambian según la selección.
+- Bigfoot y Chupacabras ya tienen poses vectoriales animadas de reposo, movimiento, salto y ataque; los impactos y especiales incluyen destellos y energía. Es una primera pasada original en Canvas, todavía no hojas de sprites rasterizadas definitivas.
 - **A / D:** moverse.
 - **W** o **↑:** saltar.
 - **J:** golpe.
@@ -24,7 +24,7 @@ También puedes publicar el repositorio con GitHub Pages para jugar desde un enl
 
 ## Visión
 
-Construir un juego de lucha accesible, con identidad visual anime, escenarios míticos, movimientos especiales y un plantel diverso de personajes legendarios. El arte del prototipo es provisional y será reemplazado progresivamente por ilustraciones y animaciones originales.
+Construir un juego de lucha accesible, con identidad visual anime, escenarios míticos, movimientos especiales y un plantel diverso de personajes legendarios. El arte actual es una primera pasada vectorial animada en Canvas; se irá refinando y extendiendo al resto del plantel.
 
 ## Documentación
 
