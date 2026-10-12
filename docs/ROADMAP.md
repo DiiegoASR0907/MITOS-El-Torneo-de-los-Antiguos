@@ -14,8 +14,11 @@
 ## Fase 2 — Identidad visual
 - [x] Definir dirección de arte inicial para Bigfoot y Chupacabras.
 - [x] Diferenciar las siluetas vectoriales de Bigfoot y Chupacabras en el prototipo.
-- [ ] Diseñar hojas de personaje y siluetas definitivas.
-- [ ] Crear sprites y animaciones: reposo, caminar, salto, ataque, daño y victoria.
+- [x] Crear una primera pasada de poses vectoriales originales para Bigfoot y Chupacabras.
+- [x] Animar variaciones de reposo, caminar, salto y extensión de ataque mediante Canvas.
+- [x] Añadir destellos, aura de especial, trazos de energía y reacción visual al daño.
+- [ ] Crear hojas de sprites ilustradas definitivas y animaciones de daño/victoria.
+- [ ] Refinar poses específicas para cada personaje y validar visualmente en móvil.
 - [ ] Ilustrar escenarios y elementos de interfaz.
 - [ ] Incorporar audio y efectos con licencia adecuada u originales.
 
