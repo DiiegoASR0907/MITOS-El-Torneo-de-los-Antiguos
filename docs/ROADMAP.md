@@ -12,6 +12,8 @@
 - [ ] Probar y ajustar equilibrio, alcance y dificultad en distintos dispositivos.
 
 ## Fase 2 — Identidad visual
+- [x] Definir dirección de arte inicial para Bigfoot y Chupacabras.
+- [x] Diferenciar las siluetas vectoriales de Bigfoot y Chupacabras en el prototipo.
 - [ ] Diseñar hojas de personaje y siluetas definitivas.
 - [ ] Crear sprites y animaciones: reposo, caminar, salto, ataque, daño y victoria.
 - [ ] Ilustrar escenarios y elementos de interfaz.
