@@ -50,3 +50,14 @@ La primera implementación mantiene los luchadores dibujados en Canvas 2D median
 - **Chupacabras:** los tonos magenta/carmesí representan espinas y energía depredadora.
 
 **Alcance honesto:** esta etapa mejora los efectos de combate y la animación procedural, pero no equivale aún a sprites rasterizados dibujados cuadro a cuadro. El siguiente salto artístico será sustituir progresivamente las formas procedurales por hojas de sprites originales con transparencia y cuadros consistentes.
+
+
+## Pareja de referencia — primera pasada de animación
+
+La primera pasada de poses de combate en Canvas refuerza cinco estados legibles: reposo con respiración sutil, locomoción con balanceo de piernas, salto con extremidades recogidas, ataque con extensión del brazo delantero y especial con una carga de energía más amplia.
+
+- **Bigfoot:** barrido ámbar, núcleo de energía cálida y trazos de impacto de fuerza.
+- **Chupacabras:** estelas magenta, núcleo luminoso y líneas de energía que enfatizan su velocidad.
+- Las colisiones, la energía, el daño, la defensa y el retroceso siguen gestionados por el sistema de combate existente.
+
+Esta es una animación procedural de referencia, no una hoja de sprites cuadro a cuadro. Se usará para evaluar siluetas, tiempos y legibilidad antes de reemplazarla por sprites originales definitivos.
