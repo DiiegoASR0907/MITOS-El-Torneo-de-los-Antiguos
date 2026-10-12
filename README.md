@@ -31,6 +31,7 @@ Construir un juego de lucha accesible, con identidad visual anime, escenarios m√
 - [Universo y reglas creativas](docs/UNIVERSO.md)
 - [Plantel inicial](docs/PERSONAJES.md)
 - [Hoja de ruta](docs/ROADMAP.md)
+- [Direcci√≥n de arte de personajes](docs/DISENO_PERSONAJES.md)
 
 ## Estado
 
