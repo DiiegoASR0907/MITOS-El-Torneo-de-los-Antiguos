@@ -37,3 +37,16 @@ La ilustración conceptual inicial de Bigfoot y Chupacabras sirve como referenci
 ## Nota de producción
 
 La versión actual sigue siendo un prototipo. Los detalles añadidos son formas vectoriales dibujadas en tiempo real, no ilustraciones rasterizadas ni hojas de sprites. No presentar el arte provisional como arte final.
+
+
+## Iteración de combate — animación y efectos
+
+La primera implementación mantiene los luchadores dibujados en Canvas 2D mediante formas vectoriales procedurales. Esto permite animar reposo, desplazamiento, salto, ataque y especial sin cargar imágenes externas ni alterar el sistema de colisiones.
+
+- **Impacto normal:** destello corto, partículas claras, texto de golpe y retroceso.
+- **Especial:** anillo de energía del color propio del luchador, ráfaga de partículas ampliada y mayor sacudida de cámara.
+- **Defensa:** chispa cian y retroceso reducido; el daño sigue mitigado.
+- **Bigfoot:** los tonos ámbar/tierra representan la fuerza física y el impacto sísmico.
+- **Chupacabras:** los tonos magenta/carmesí representan espinas y energía depredadora.
+
+**Alcance honesto:** esta etapa mejora los efectos de combate y la animación procedural, pero no equivale aún a sprites rasterizados dibujados cuadro a cuadro. El siguiente salto artístico será sustituir progresivamente las formas procedurales por hojas de sprites originales con transparencia y cuadros consistentes.
