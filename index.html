@@ -28,7 +28,39 @@ function jump(f){if(f.ground&&running){f.vy=-13;f.ground=false;burst(f.x,f.y-10,
 function burst(X,Y,color,n){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,s=1+Math.random()*6;parts.push({x:X,y:Y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1,life:24,max:24,size:2+Math.random()*5,color})}}
 function text(X,Y,t,color){texts.push({x:X,y:Y,t,color,life:35})}
 function attack(f,type){if(!running||ended||f.cool>0||f.attack>0)return;if(type==='special'&&f.energy<35){text(f.x,f.y-f.h-10,'¡SIN ENERGÍA!','#ffd36a');return}if(type==='special')f.energy-=35;else f.energy=Math.min(100,f.energy+9);f.attack=type==='special'?25:14;f.type=type;f.cool=type==='special'?38:23;burst(f.x+f.face*40,f.y-f.h*.55,type==='special'?'#ffd36a':'#b4f6ff',type==='special'?18:7)}
-function hit(a,b){let range=a.type==='special'?145:104,close=Math.abs(a.x+a.face*range*.48-b.x)<range*.58,vertical=Math.abs((a.y-a.h*.48)-(b.y-b.h*.5))<105;if(a.attack>0&&a.attack===(a.type==='special'?24:13)&&close&&vertical){let blocked=b.blocking&&b.face===-a.face,damage=a.type==='special'?17:7;if(blocked){damage=Math.ceil(damage*.28);text(b.x,b.y-b.h-20,'¡BLOQUEO!', '#65eaff');burst(b.x,b.y-b.h*.55,'#65eaff',10)}else{text(b.x,b.y-b.h-20,a.type==='special'?'¡IMPACTO!':'¡GOLPE!',a.type==='special'?'#ffd36a':'#fff');burst(b.x,b.y-b.h*.55,a.type==='special'?'#ffd36a':'#fff1ad',a.type==='special'?24:12)}b.hp=Math.max(0,b.hp-damage);b.energy=Math.min(100,b.energy+(blocked?5:10));a.energy=Math.min(100,a.energy+5);if(!blocked){b.vx=a.face*(a.type==='special'?8:4);b.vy=a.type==='special'?-5:-2;shake=a.type==='special'?12:5}else{b.vx-=a.face*1.2;shake=2}b.flash=blocked?4:9}}
+function hit(a,b){
+  const special=a.type==='special',range=special?145:104;
+  const close=Math.abs(a.x+a.face*range*.48-b.x)<range*.58;
+  const vertical=Math.abs((a.y-a.h*.48)-(b.y-b.h*.5))<105;
+  if(a.attack>0&&a.attack===(special?24:13)&&close&&vertical){
+    const blocked=b.blocking&&b.face===-a.face;
+    let damage=special?17:7;
+    const attackerColor=a.character?.glow||(a.character?.id==='bigfoot'?'#ffb84d':'#ff3f9b');
+    const impactX=b.x-a.face*13,impactY=b.y-b.h*.55;
+    if(blocked){
+      damage=Math.ceil(damage*.28);
+      text(b.x,b.y-b.h-20,'¡BLOQUEO!','#65eaff');
+      burst(impactX,impactY,'#65eaff',13);
+      ring(impactX,impactY,'#65eaff',22);
+    }else{
+      text(b.x,b.y-b.h-20,special?'¡ESPECIAL!':'¡IMPACTO!',special?attackerColor:'#fff');
+      burst(impactX,impactY,special?attackerColor:'#fff1ad',special?30:16);
+      ring(impactX,impactY,special?attackerColor:'#fff1ad',special?54:31);
+      if(special){
+        for(let i=0;i<7;i++)parts.push({x:impactX,y:impactY,vx:a.face*(2+Math.random()*5),vy:-4+Math.random()*7,life:20+Math.random()*12,max:32,size:2+Math.random()*4,color:attackerColor});
+        shake=14;
+      }
+    }
+    b.hp=Math.max(0,b.hp-damage);b.energy=Math.min(100,b.energy+(blocked?5:10));a.energy=Math.min(100,a.energy+5);
+    if(!blocked){b.vx=a.face*(special?8:4);b.vy=special?-5:-2;shake=special?14:6}
+    else{b.vx-=a.face*1.2;shake=3}
+    b.flash=blocked?4:10;
+  }
+}
+function ring(px,py,color,radius){
+  for(let i=0;i<18;i++){const angle=i*Math.PI*2/18;parts.push({x:px,y:py,vx:Math.cos(angle)*2.8,vy:Math.sin(angle)*2.8,life:14,max:14,size:2,color})}
+  texts.push({t:'✦',x:px,y:py- radius*.2,color,life:10});
+}
 function updateF(f){f.cool=Math.max(0,f.cool-1);f.attack=Math.max(0,f.attack-1);f.flash=Math.max(0,f.flash-1);f.vy+=.62;f.x+=f.vx;f.y+=f.vy;f.vx*=.82;if(f.y>=FLOOR){f.y=FLOOR;f.vy=0;f.ground=true}f.x=Math.max(55,Math.min(W-55,f.x));f.walk+=Math.abs(f.vx)*.09}
 function update(){if(!running||ended)return;frame++;p.face=e.x>=p.x?1:-1;e.face=-p.face;p.blocking=!!(keys.l||keys.block);let moving=false;if(!p.blocking&&(keys.a||keys.left||keys['left'])){p.vx=-4.3;moving=true}if(!p.blocking&&(keys.d||keys.right)){p.vx=4.3;moving=true}if(!moving)p.walk*=.9;let dx=p.x-e.x,dist=Math.abs(dx);if(dist>112)e.vx+=(dx>0?1:-1)*.42;else e.vx*=.8;if(e.cool<=0&&dist<145&&Math.random()<.045)attack(e,e.energy>=40&&Math.random()<.35?'special':'hit');if(e.ground&&Math.random()<.0025&&dist<180)jump(e);updateF(p);updateF(e);hit(p,e);hit(e,p);for(let i=parts.length-1;i>=0;i--){let q=parts[i];q.x+=q.vx;q.y+=q.vy;q.vy+=.12;q.vx*=.98;if(--q.life<=0)parts.splice(i,1)}for(let i=texts.length-1;i>=0;i--){texts[i].y-=.7;if(--texts[i].life<=0)texts.splice(i,1)}hp1.style.width=p.hp+'%';hp2.style.width=e.hp+'%';en1.style.width=p.energy+'%';en2.style.width=e.energy+'%';if(p.hp<=0||e.hp<=0){ended=true;running=false;document.querySelector('#winner').textContent=p.hp>e.hp?'¡VICTORIA!':'DERROTA';document.querySelector('#result').textContent=p.hp>e.hp?p.name+' ha defendido la arena. La leyenda continúa…':e.name+' domina esta ronda. ¡Vuelve a intentarlo!';document.querySelector('#end').hidden=false}}
 function poly(points,fill,stroke){x.beginPath();x.moveTo(...points[0]);for(let i=1;i<points.length;i++)x.lineTo(...points[i]);x.closePath();x.fillStyle=fill;x.fill();if(stroke){x.strokeStyle=stroke;x.lineWidth=3;x.stroke()}}
