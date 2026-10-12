@@ -48,6 +48,7 @@ Priorizar una mejora pequeña, comprobable y jugable en cada iteración. El arte
 
 ## Iteración visual de combate
 - [x] Reforzar destellos, anillos de energía y partículas al impactar.
+- [x] Primera pasada de poses diferenciadas y estelas de ataque para la pareja de referencia.
 - [x] Diferenciar visualmente golpes normales, especiales y bloqueos.
 - [x] Mantener el daño, el retroceso, la defensa y las barras de vida conectados al sistema de combate.
 - [ ] Crear hojas de sprites originales con cuadros separados y fondo transparente para reposo, caminar, salto, ataque y especial.
