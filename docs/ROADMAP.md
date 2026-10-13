@@ -17,7 +17,7 @@
 - [x] Crear una primera pasada de poses vectoriales originales para Bigfoot y Chupacabras.
 - [x] Animar variaciones de reposo, caminar, salto y extensión de ataque mediante Canvas.
 - [x] Añadir destellos, aura de especial, trazos de energía y reacción visual al daño.
-- [ ] Crear hojas de sprites ilustradas definitivas y animaciones de daño/victoria.
+- [ ] Crear hojas de sprites ilustradas definitivas y animaciones de daño/victoria. (pendiente: la iteración actual conecta estados Canvas, aún no sprites dibujados cuadro a cuadro)
 - [ ] Refinar poses específicas para cada personaje y validar visualmente en móvil.
 - [ ] Ilustrar escenarios y elementos de interfaz.
 - [ ] Incorporar audio y efectos con licencia adecuada u originales.
@@ -51,6 +51,6 @@ Priorizar una mejora pequeña, comprobable y jugable en cada iteración. El arte
 - [x] Primera pasada de poses diferenciadas y estelas de ataque para la pareja de referencia.
 - [x] Diferenciar visualmente golpes normales, especiales y bloqueos.
 - [x] Mantener el daño, el retroceso, la defensa y las barras de vida conectados al sistema de combate.
-- [ ] Crear hojas de sprites originales con cuadros separados y fondo transparente para reposo, caminar, salto, ataque y especial.
-- [ ] Integrar las hojas de sprites en Canvas y validar alineación, colisiones y rendimiento móvil.
+- [ ] Crear hojas de sprites originales con cuadros separados y fondo transparente para reposo, caminar, salto, ataque, especial y bloqueo.
+- [x] Conectar estados de animación de reposo, caminar, salto, ataque, especial, bloqueo y daño con el combate Canvas.\n- [ ] Integrar las hojas de sprites ilustradas en Canvas y validar alineación, colisiones y rendimiento móvil.
 - [ ] Extender la dirección artística al resto de los 12 luchadores.
