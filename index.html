@@ -213,7 +213,8 @@ function drawF(f){
     x.save();x.globalAlpha=.35+.15*Math.sin(frame*.18);x.strokeStyle=glow;x.lineWidth=2;
     x.beginPath();x.moveTo(-22,headY-18);x.lineTo(-33,headY-34);x.lineTo(-17,headY-26);x.stroke();x.restore();
   }
-  x.fillStyle=glow;x.shadowColor=glow;x.shadowBlur=14;x.fillRect(5,headY-7,7,4);x.shadowBlur=0;\n  if(f.blocking){x.save();x.globalAlpha=.9;x.strokeStyle='#65eaff';x.lineWidth=3;x.beginPath();x.arc(22,-f.h*.58,25,-1.45,.95);x.stroke();x.restore();}
+  x.fillStyle=glow;x.shadowColor=glow;x.shadowBlur=14;x.fillRect(5,headY-7,7,4);x.shadowBlur=0;
+  if(f.blocking){x.save();x.globalAlpha=.9;x.strokeStyle='#65eaff';x.lineWidth=3;x.beginPath();x.arc(22,-f.h*.58,25,-1.45,.95);x.stroke();x.restore();}
   if(attacking){
     const hand=40+(special?46:28)*swing;
     x.save();x.globalAlpha=special?.9:.65;x.strokeStyle=glow;x.lineWidth=special?6:3;x.beginPath();x.arc(hand,-f.h*.52,special?22:12,-1.1,1.1);x.stroke();
