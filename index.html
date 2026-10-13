@@ -71,21 +71,23 @@ const spriteSheetSources={
 };
 const spriteSheets={};
 const spriteReady={bigfoot:false,chupacabras:false};
+const spriteFailed={bigfoot:false,chupacabras:false};
 for(const id of ['bigfoot','chupacabras']){
   const img=new Image();
   img.decoding='async';
-  img.onload=()=>{spriteReady[id]=img.naturalWidth>0;};
-  img.onerror=()=>{
-    // Si la URL publicada no carga, reintentar con el SVG embebido en el documento.
-    if(!img.dataset.embeddedFallback){
-      img.dataset.embeddedFallback='1';
-      img.src=spriteSheetSources[id];
-    }else{
-      spriteReady[id]=false;
-      console.error('MITOS: no se pudo cargar la hoja SVG de',id);
-    }
+  img.onload=()=>{
+    spriteReady[id]=img.naturalWidth===768&&img.naturalHeight===640;
+    spriteFailed[id]=!spriteReady[id];
+    console.info('MITOS sprite',id,{ready:spriteReady[id],width:img.naturalWidth,height:img.naturalHeight});
   };
-  img.src='https://diiegoasr0907.github.io/MITOS-El-Torneo-de-los-Antiguos/assets/sprites/'+id+'.svg?v=0ea44159';
+  img.onerror=()=>{
+    spriteReady[id]=false;
+    spriteFailed[id]=true;
+    console.error('MITOS: falló la carga del sprite embebido',id);
+  };
+  // Cargar primero la hoja SVG incluida en index.html; así no dependemos de
+  // GitHub Pages, caché ni solicitudes entre dominios para los dos luchadores.
+  img.src=spriteSheetSources[id];
   spriteSheets[id]=img;
 }
 function spritePose(f){
@@ -145,6 +147,29 @@ function drawF(f){
     }
     x.restore();
     return;
+  }
+  if(spriteId==='bigfoot'||spriteId==='chupacabras'){
+    if(sheet&&spriteReady[spriteId]&&sheet.complete&&sheet.naturalWidth){
+      // La hoja se dibuja en la rama de sprites situada inmediatamente abajo.
+    }else{
+      // No dibujar silenciosamente el diseño procedural antiguo: mostrar un
+      // diagnóstico visible si el SVG no carga en el dispositivo.
+      x.save();
+      x.translate(f.x,f.y);
+      x.fillStyle='rgba(12,8,24,.9)';
+      x.strokeStyle='#ff5577';
+      x.lineWidth=2;
+      x.beginPath();x.roundRect(-75,-100,150,54,10);x.fill();x.stroke();
+      x.fillStyle='#fff';
+      x.textAlign='center';
+      x.font='bold 10px system-ui';
+      x.fillText(spriteFailed[spriteId]?'ERROR AL CARGAR SPRITE':'CARGANDO SPRITE…',0,-77);
+      x.fillStyle='#ffb7c5';
+      x.font='9px system-ui';
+      x.fillText(spriteId==='bigfoot'?'BIGFOOT':'CHUPACABRAS',0,-60);
+      x.restore();
+      return;
+    }
   }
   x.save();x.translate(f.x,f.y);x.scale(f.face,1);
   const B=f.character?.id==='bigfoot'||f.character?.id!=='chupacabras'&&f.character?.name==='Bigfoot';
