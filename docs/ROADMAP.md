@@ -51,6 +51,7 @@ Priorizar una mejora pequeña, comprobable y jugable en cada iteración. El arte
 - [x] Primera pasada de poses diferenciadas y estelas de ataque para la pareja de referencia.
 - [x] Diferenciar visualmente golpes normales, especiales y bloqueos.
 - [x] Mantener el daño, el retroceso, la defensa y las barras de vida conectados al sistema de combate.
-- [ ] Crear hojas de sprites originales con cuadros separados y fondo transparente para reposo, caminar, salto, ataque, especial y bloqueo.
-- [x] Conectar estados de animación de reposo, caminar, salto, ataque, especial, bloqueo y daño con el combate Canvas.\n- [ ] Integrar las hojas de sprites ilustradas en Canvas y validar alineación, colisiones y rendimiento móvil.
+- [x] Crear hojas SVG originales con fondo transparente y seis celdas consistentes por personaje: reposo, caminar, salto, ataque, especial y bloqueo.
+- [x] Conectar estados de animación de reposo, caminar, salto, ataque, especial, bloqueo y daño con el combate Canvas.\n- [x] Integrar las hojas SVG de Bigfoot y Chupacabras en Canvas, conservando la física y las cajas de colisión existentes.
+- [ ] Validar visualmente alineación, animación y rendimiento en móvil y escritorio; ajustar el tamaño de los fotogramas si hace falta.
 - [ ] Extender la dirección artística al resto de los 12 luchadores.
