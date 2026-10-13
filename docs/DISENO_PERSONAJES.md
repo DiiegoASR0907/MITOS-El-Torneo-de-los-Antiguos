@@ -75,3 +75,16 @@ Se añadieron hojas SVG originales con transparencia en `assets/sprites/bigfoot.
 6. Bloqueo
 
 El Canvas selecciona la celda según el estado de combate de cada luchador. Si el recurso no está cargado, el renderizado procedural existente permanece como respaldo. La física, las posiciones, el daño y las colisiones no se han sustituido por la imagen: las hojas son una capa visual. Esta entrega es una primera pasada SVG estilizada; se requiere validar en dispositivos reales la escala, el encuadre, los cambios de estado y el rendimiento antes de darla por final.
+
+
+## Integración de animación — iteración 2 (13 de octubre de 2026)
+
+- Se refinó la selección de fotogramas para usar los cuatro cuadros disponibles por estado en las hojas piloto de Bigfoot y Chupacabras.
+- Reposo y bloqueo alternan cuadros más lentamente; caminar usa el contador de pasos; el salto cambia según la velocidad vertical; golpe y especial siguen su temporización de combate.
+- La reacción visual al daño tiene prioridad temporal, con un destello localizado; el aterrizaje añade un aro breve en el suelo.
+- Se ajustó ligeramente la escala de cada personaje y se mantuvo un punto de apoyo común para que los pies permanezcan alineados con el suelo.
+- El Canvas conserva el dibujo procedural como respaldo mientras una imagen SVG no haya cargado. La lógica de movimiento, hitboxes, daño, energía, controles y selección no se sustituye por las imágenes.
+
+### Validación pendiente en dispositivos
+
+La sintaxis de los tres scripts inline fue validada tras el cambio. Eso no demuestra por sí solo el comportamiento en navegador. Quedan por ejecutar y confirmar manualmente en móvil y escritorio: teclado/táctil, colisiones y daño, bloqueo/retroceso, HUD, selección de los 12 personajes, victoria/derrota/reinicio, alineación de sprites y rendimiento.
