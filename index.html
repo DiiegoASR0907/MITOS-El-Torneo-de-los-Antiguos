@@ -265,6 +265,18 @@ window.mitosStartCombat=reset;function loop(){update();if(p&&e)draw();requestAni
   if(player){player.addEventListener('change',function(){updateInfo(player,'player')});updateInfo(player,'player');}
   if(rival){rival.addEventListener('change',function(){updateInfo(rival,'rival')});updateInfo(rival,'rival');}
   const start=document.getElementById('start'),select=document.getElementById('select'),selectBtn=document.getElementById('selectBtn');
+  const fightBtn=document.getElementById('fightBtn');
+  if(fightBtn)fightBtn.addEventListener('click',function(){
+    if(typeof window.mitosStartCombat==='function'){
+      window.mitosStartCombat();
+      start.hidden=true;start.style.display='none';
+      select.hidden=true;select.style.display='none';
+      const end=document.getElementById('end');if(end){end.hidden=true;end.style.display='none';}
+    }else{
+      const note=document.querySelector('.bottom>div');
+      if(note)note.textContent='No se pudo iniciar el motor de combate. Recarga la página e inténtalo de nuevo.';
+    }
+  });
   if(selectBtn&&start&&select)selectBtn.addEventListener('click',function(){start.hidden=true;start.style.display='none';select.hidden=false;select.style.display='flex';select.style.visibility='visible';select.scrollTop=0;});
   window.addEventListener('error',function(ev){
     const note=document.querySelector('.bottom>div');
