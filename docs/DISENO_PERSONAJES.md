@@ -61,3 +61,17 @@ La primera pasada de poses de combate en Canvas refuerza cinco estados legibles:
 - Las colisiones, la energía, el daño, la defensa y el retroceso siguen gestionados por el sistema de combate existente.
 
 Esta es una animación procedural de referencia, no una hoja de sprites cuadro a cuadro. Se usará para evaluar siluetas, tiempos y legibilidad antes de reemplazarla por sprites originales definitivos.
+
+
+## Hojas de sprites piloto integradas
+
+Se añadieron hojas SVG originales con transparencia en `assets/sprites/bigfoot.svg` y `assets/sprites/chupacabras.svg`. Cada hoja usa una cuadrícula horizontal de seis celdas de 128 × 160 px, con el mismo punto de apoyo en los pies para facilitar la sustitución entre estados:
+
+1. Reposo
+2. Caminar
+3. Salto
+4. Ataque
+5. Especial
+6. Bloqueo
+
+El Canvas selecciona la celda según el estado de combate de cada luchador. Si el recurso no está cargado, el renderizado procedural existente permanece como respaldo. La física, las posiciones, el daño y las colisiones no se han sustituido por la imagen: las hojas son una capa visual. Esta entrega es una primera pasada SVG estilizada; se requiere validar en dispositivos reales la escala, el encuadre, los cambios de estado y el rendimiento antes de darla por final.
