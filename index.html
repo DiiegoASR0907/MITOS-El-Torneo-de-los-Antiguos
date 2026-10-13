@@ -10,7 +10,8 @@
 </head>
 <body><main class="shell">
 <header><div><div class="brand">MI<span>T</span>OS // ARENA</div><div class="sub">El Torneo de los Antiguos · Prototipo 0.1</div></div><div class="pill">DEMO JUGABLE · 1 JUGADOR</div></header>
-<div class="arena"><canvas id="game" width="960" height="540" aria-label="Arena de combate 2D"></canvas>
+<div class="arena"><div id="spriteDebug" aria-live="polite" style="position:fixed;z-index:99999;left:8px;top:8px;max-width:calc(100vw - 16px);padding:6px 9px;border:1px solid #8d79b9;border-radius:8px;background:rgba(12,8,24,.92);color:#fff;font:700 10px/1.45 system-ui,sans-serif;letter-spacing:.2px;pointer-events:none">MITOS BUILD c55c61b8 · comprobando sprites…</div>
+<canvas id="game" width="960" height="540" aria-label="Arena de combate 2D"></canvas>
 <div class="hud"><div class="fighter"><span id="hud1">BIGFOOT</span><div class="bar"><div class="fill" id="hp1"></div></div><div class="energy"><div id="en1"></div></div></div><div class="round">ROUND 01<br><span style="color:white">VS</span></div><div class="fighter right"><span id="hud2">CHUPACABRAS</span><div class="bar"><div class="fill" id="hp2"></div></div><div class="energy"><div id="en2"></div></div></div></div>
 <div class="overlay" id="start"><div class="panel"><div class="sub">Una leyenda despierta</div><h1>MITOS <span>ARENA</span></h1><p>Elige a tu luchador y a su rival. Doce leyendas esperan su turno en el Templo del Umbral.</p><button class="btn" id="selectBtn" type="button" onclick="document.getElementById('start').hidden=true;document.getElementById('start').style.display='none';var panel=document.getElementById('select');panel.hidden=false;panel.style.display='flex';panel.style.visibility='visible';panel.scrollTop=0;">ELEGIR PERSONAJES</button><div class="note">Sprites SVG integrados · animación por estados</div></div></div><div class="overlay" id="select" hidden><div class="panel select-panel"><div class="sub">Forja tu destino</div><h1>SELECCIÓN <span>DE LEYENDAS</span></h1><p>Escoge ambos combatientes. Cada leyenda tiene su propio perfil y afinidad visual.</p><div class="select-grid"><div class="pick"><label for="playerPick">TU LUCHADOR</label><select id="playerPick"></select><div class="fighter-info"><div class="sigil" id="playerSigil">B</div><div><strong id="playerName">Bigfoot</strong><small id="playerDesc"></small></div></div></div><div class="pick"><label for="rivalPick">RIVAL</label><select id="rivalPick"></select><div class="fighter-info"><div class="sigil" id="rivalSigil">C</div><div><strong id="rivalName">Chupacabras</strong><small id="rivalDesc"></small></div></div></div></div><div class="select-actions"><button class="btn" id="fightBtn">COMENZAR COMBATE</button><button class="btn secondary" id="randomBtn">SORPRÉNDEME</button></div><div class="note">Bigfoot y Chupacabras usan hojas SVG animadas; los otros luchadores conservan el renderizado procedural.</div></div></div>
 <div class="overlay" id="end" hidden><div class="panel"><div class="sub">Fin del combate</div><h1 id="winner">VICTORIA</h1><p id="result">La arena ha elegido a su campeón.</p><button class="btn" id="again">VOLVER A PELEAR</button></div></div></div>
@@ -72,6 +73,7 @@ const spriteSheetSources={
 const spriteSheets={};
 const spriteReady={bigfoot:false,chupacabras:false};
 const spriteFailed={bigfoot:false,chupacabras:false};
+const spriteRenderCount={bigfoot:0,chupacabras:0};
 for(const id of ['bigfoot','chupacabras']){
   const img=new Image();
   img.decoding='async';
@@ -117,6 +119,7 @@ function drawF(f){
   const spriteId=f.character?.id;
   const sheet=spriteSheets[spriteId];
   if((spriteId==='bigfoot'||spriteId==='chupacabras')&&sheet&&spriteReady[spriteId]&&sheet.complete&&sheet.naturalWidth){
+    spriteRenderCount[spriteId]++;
     x.save();
     x.translate(f.x,f.y);
     x.scale(f.face,1);
@@ -285,7 +288,12 @@ function drawF(f){
   if(f.flash>0){x.globalAlpha=.55;x.fillStyle='#fff';x.beginPath();x.ellipse(0,-f.h*.53,34,f.h*.48,0,0,Math.PI*2);x.fill();x.globalAlpha=1}
   x.restore();
 }
-function draw(){x.save();if(shake>0){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.82}bg();drawF(p);drawF(e);for(const q of parts){x.globalAlpha=Math.max(0,q.life/q.max);x.fillStyle=q.color;x.shadowColor=q.color;x.shadowBlur=10;x.beginPath();x.arc(q.x,q.y,q.size,0,7);x.fill()}x.shadowBlur=0;x.globalAlpha=1;for(const t of texts){x.globalAlpha=Math.min(1,t.life/12);x.font='900 20px system-ui';x.textAlign='center';x.lineWidth=4;x.strokeStyle='#171025';x.strokeText(t.t,t.x,t.y);x.fillStyle=t.color;x.fillText(t.t,t.x,t.y)}x.globalAlpha=1;x.textAlign='center';x.font='900 12px system-ui';x.fillStyle='#d3c9ff';x.globalAlpha=.65;x.fillText('TEMPLO DEL UMBRAL',480,514);x.globalAlpha=1;x.restore()}
+function draw(){x.save();if(shake>0){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.82}bg();drawF(p);drawF(e);
+const spriteDebug=document.querySelector('#spriteDebug');
+if(spriteDebug){
+  const status=id=>spriteFailed[id]?'ERROR':spriteReady[id]?'SVG OK / render '+spriteRenderCount[id]:'CARGANDO';
+  spriteDebug.textContent='MITOS BUILD c55c61b8 · BIGFOOT: '+status('bigfoot')+' · CHUPACABRAS: '+status('chupacabras');
+}for(const q of parts){x.globalAlpha=Math.max(0,q.life/q.max);x.fillStyle=q.color;x.shadowColor=q.color;x.shadowBlur=10;x.beginPath();x.arc(q.x,q.y,q.size,0,7);x.fill()}x.shadowBlur=0;x.globalAlpha=1;for(const t of texts){x.globalAlpha=Math.min(1,t.life/12);x.font='900 20px system-ui';x.textAlign='center';x.lineWidth=4;x.strokeStyle='#171025';x.strokeText(t.t,t.x,t.y);x.fillStyle=t.color;x.fillText(t.t,t.x,t.y)}x.globalAlpha=1;x.textAlign='center';x.font='900 12px system-ui';x.fillStyle='#d3c9ff';x.globalAlpha=.65;x.fillText('TEMPLO DEL UMBRAL',480,514);x.globalAlpha=1;x.restore()}
 window.mitosStartCombat=reset;function loop(){update();if(p&&e)draw();requestAnimationFrame(loop)}p=fighter(roster[0],260,0);e=fighter(roster[1],700,1);loop()})();
 </script><script>
 /* Respaldo independiente: llena los selectores aunque falle el script principal. */
