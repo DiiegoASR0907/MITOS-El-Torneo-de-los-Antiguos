@@ -65,7 +65,41 @@ function updateF(f){f.cool=Math.max(0,f.cool-1);f.attack=Math.max(0,f.attack-1);
 function update(){if(!running||ended)return;if(hitStop>0){hitStop--;return}frame++;p.face=e.x>=p.x?1:-1;e.face=-p.face;p.blocking=!!(keys.l||keys.block);let moving=false;if(!p.blocking&&(keys.a||keys.left||keys['left'])){p.vx=-4.3;moving=true}if(!p.blocking&&(keys.d||keys.right)){p.vx=4.3;moving=true}if(!moving)p.walk*=.9;let dx=p.x-e.x,dist=Math.abs(dx);if(dist>112)e.vx+=(dx>0?1:-1)*.42;else e.vx*=.8;if(e.cool<=0&&dist<145&&Math.random()<.045)attack(e,e.energy>=40&&Math.random()<.35?'special':'hit');if(e.ground&&Math.random()<.0025&&dist<180)jump(e);updateF(p);updateF(e);hit(p,e);hit(e,p);for(let i=parts.length-1;i>=0;i--){let q=parts[i];q.x+=q.vx;q.y+=q.vy;q.vy+=.12;q.vx*=.98;if(--q.life<=0)parts.splice(i,1)}for(let i=texts.length-1;i>=0;i--){texts[i].y-=.7;if(--texts[i].life<=0)texts.splice(i,1)}hp1.style.width=p.hp+'%';hp2.style.width=e.hp+'%';en1.style.width=p.energy+'%';en2.style.width=e.energy+'%';if(p.hp<=0||e.hp<=0){ended=true;running=false;document.querySelector('#winner').textContent=p.hp>e.hp?'¡VICTORIA!':'DERROTA';document.querySelector('#result').textContent=p.hp>e.hp?p.name+' ha defendido la arena. La leyenda continúa…':e.name+' domina esta ronda. ¡Vuelve a intentarlo!';document.querySelector('#end').hidden=false}}
 function poly(points,fill,stroke){x.beginPath();x.moveTo(...points[0]);for(let i=1;i<points.length;i++)x.lineTo(...points[i]);x.closePath();x.fillStyle=fill;x.fill();if(stroke){x.strokeStyle=stroke;x.lineWidth=3;x.stroke()}}
 function bg(){let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#101637');g.addColorStop(.55,'#342451');g.addColorStop(1,'#101326');x.fillStyle=g;x.fillRect(0,0,W,H);x.fillStyle='#d7e7ff';x.globalAlpha=.8;x.beginPath();x.arc(755,118,43,0,7);x.fill();x.globalAlpha=1;for(let i=0;i<55;i++){x.fillStyle=i%4?'#c7d8ff':'#ffd36a';x.globalAlpha=.3;x.fillRect((i*173+37)%W,(i*71+21)%250,2,2)}x.globalAlpha=1;poly([[0,360],[0,255],[75,255],[75,220],[105,220],[105,270],[165,270],[165,238],[205,238],[205,360]],'#171a36');poly([[660,360],[660,270],[715,270],[715,220],[750,220],[750,260],[810,260],[810,235],[850,235],[850,275],[960,275],[960,360]],'#171a36');x.save();x.translate(480,320);x.strokeStyle='#7a5cff';x.lineWidth=4;x.globalAlpha=.4+Math.sin(frame*.06)*.1;x.beginPath();x.ellipse(0,0,85,145,0,0,7);x.stroke();x.strokeStyle='#46dfff';x.lineWidth=2;x.beginPath();x.ellipse(0,0,70,130,0,0,7);x.stroke();x.restore();x.globalAlpha=1;x.fillStyle='#0b1022';x.fillRect(0,FLOOR,W,H-FLOOR);g=x.createLinearGradient(0,FLOOR,0,H);g.addColorStop(0,'#34264e');g.addColorStop(1,'#0b1020');x.fillStyle=g;x.fillRect(0,FLOOR,W,H-FLOOR);x.strokeStyle='#6d548a';x.globalAlpha=.4;for(let xx=-300;xx<W+300;xx+=65){x.beginPath();x.moveTo(480,FLOOR);x.lineTo(xx,H);x.stroke()}for(let y=465;y<H;y+=23){x.beginPath();x.moveTo(0,y);x.lineTo(W,y);x.stroke()}x.globalAlpha=1}
+const spriteSheets={};
+for(const id of ['bigfoot','chupacabras']){
+  const img=new Image();
+  img.src='assets/sprites/'+id+'.svg';
+  spriteSheets[id]=img;
+}
+function spriteFrame(f){
+  if(state==='block')return 5;
+  if(f.attack>0&&f.type==='special')return 4;
+  if(f.attack>0)return 3;
+  if(!f.ground)return 2;
+  if(Math.abs(f.vx)>.8)return 1;
+  return 0;
+}
 function drawF(f){
+  const sheet=spriteSheets[f.character?.id];
+  if(sheet&&sheet.complete&&sheet.naturalWidth){
+    x.save();
+    x.translate(f.x,f.y);
+    x.scale(f.face,1);
+    const cell=spriteFrame(f);
+    x.drawImage(sheet,cell*128,0,128,160,-64,-154,128,160);
+    // Brillo de estado conservado sobre los sprites transparentes.
+    if(state==='block'){
+      x.globalAlpha=.75;x.strokeStyle='#65eaff';x.lineWidth=3;
+      x.beginPath();x.arc(22,-82,31,-1.35,1.05);x.stroke();
+    }
+    if(f.attack>0){
+      const col=f.character.id==='bigfoot'?'#ffbc59':'#ff42d0';
+      x.globalAlpha=.7;x.strokeStyle=col;x.lineWidth=3;
+      x.beginPath();x.arc(48,-78,22+Math.sin(frame*.5)*4,-.9,.9);x.stroke();
+    }
+    x.restore();
+    return;
+  }
   x.save();x.translate(f.x,f.y);x.scale(f.face,1);
   const B=f.character?.id==='bigfoot'||f.character?.id!=='chupacabras'&&f.character?.name==='Bigfoot';
   const ch=f.character||{},main=ch.main||(B?'#62402e':'#25364f'),light=ch.light||(B?'#b27a4c':'#a8f2dc'),dark=ch.dark||(B?'#30202a':'#11182f'),glow=ch.glow||(B?'#ffbc69':'#ff426e');
