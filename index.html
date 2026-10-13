@@ -12,7 +12,7 @@
 <header><div><div class="brand">MI<span>T</span>OS // ARENA</div><div class="sub">El Torneo de los Antiguos · Prototipo 0.1</div></div><div class="pill">DEMO JUGABLE · 1 JUGADOR</div></header>
 <div class="arena"><canvas id="game" width="960" height="540" aria-label="Arena de combate 2D"></canvas>
 <div class="hud"><div class="fighter"><span id="hud1">BIGFOOT</span><div class="bar"><div class="fill" id="hp1"></div></div><div class="energy"><div id="en1"></div></div></div><div class="round">ROUND 01<br><span style="color:white">VS</span></div><div class="fighter right"><span id="hud2">CHUPACABRAS</span><div class="bar"><div class="fill" id="hp2"></div></div><div class="energy"><div id="en2"></div></div></div></div>
-<div class="overlay" id="start"><div class="panel"><div class="sub">Una leyenda despierta</div><h1>MITOS <span>ARENA</span></h1><p>Elige a tu luchador y a su rival. Doce leyendas esperan su turno en el Templo del Umbral.</p><button class="btn" id="selectBtn" type="button" onclick="document.getElementById('start').hidden=true;document.getElementById('start').style.display='none';var panel=document.getElementById('select');panel.hidden=false;panel.style.display='flex';panel.style.visibility='visible';panel.scrollTop=0;">ELEGIR PERSONAJES</button><div class="note">Prototipo inicial · Arte vectorial temporal</div></div></div><div class="overlay" id="select" hidden><div class="panel select-panel"><div class="sub">Forja tu destino</div><h1>SELECCIÓN <span>DE LEYENDAS</span></h1><p>Escoge ambos combatientes. Cada leyenda tiene su propio perfil y afinidad visual.</p><div class="select-grid"><div class="pick"><label for="playerPick">TU LUCHADOR</label><select id="playerPick"></select><div class="fighter-info"><div class="sigil" id="playerSigil">B</div><div><strong id="playerName">Bigfoot</strong><small id="playerDesc"></small></div></div></div><div class="pick"><label for="rivalPick">RIVAL</label><select id="rivalPick"></select><div class="fighter-info"><div class="sigil" id="rivalSigil">C</div><div><strong id="rivalName">Chupacabras</strong><small id="rivalDesc"></small></div></div></div></div><div class="select-actions"><button class="btn" id="fightBtn">COMENZAR COMBATE</button><button class="btn secondary" id="randomBtn">SORPRÉNDEME</button></div><div class="note">La selección cambia los nombres, perfiles y colores del luchador. Los sprites siguen siendo arte vectorial provisional.</div></div></div>
+<div class="overlay" id="start"><div class="panel"><div class="sub">Una leyenda despierta</div><h1>MITOS <span>ARENA</span></h1><p>Elige a tu luchador y a su rival. Doce leyendas esperan su turno en el Templo del Umbral.</p><button class="btn" id="selectBtn" type="button" onclick="document.getElementById('start').hidden=true;document.getElementById('start').style.display='none';var panel=document.getElementById('select');panel.hidden=false;panel.style.display='flex';panel.style.visibility='visible';panel.scrollTop=0;">ELEGIR PERSONAJES</button><div class="note">Sprites SVG piloto · animación por estados</div></div></div><div class="overlay" id="select" hidden><div class="panel select-panel"><div class="sub">Forja tu destino</div><h1>SELECCIÓN <span>DE LEYENDAS</span></h1><p>Escoge ambos combatientes. Cada leyenda tiene su propio perfil y afinidad visual.</p><div class="select-grid"><div class="pick"><label for="playerPick">TU LUCHADOR</label><select id="playerPick"></select><div class="fighter-info"><div class="sigil" id="playerSigil">B</div><div><strong id="playerName">Bigfoot</strong><small id="playerDesc"></small></div></div></div><div class="pick"><label for="rivalPick">RIVAL</label><select id="rivalPick"></select><div class="fighter-info"><div class="sigil" id="rivalSigil">C</div><div><strong id="rivalName">Chupacabras</strong><small id="rivalDesc"></small></div></div></div></div><div class="select-actions"><button class="btn" id="fightBtn">COMENZAR COMBATE</button><button class="btn secondary" id="randomBtn">SORPRÉNDEME</button></div><div class="note">Bigfoot y Chupacabras usan hojas SVG animadas; los otros luchadores conservan el renderizado procedural.</div></div></div>
 <div class="overlay" id="end" hidden><div class="panel"><div class="sub">Fin del combate</div><h1 id="winner">VICTORIA</h1><p id="result">La arena ha elegido a su campeón.</p><button class="btn" id="again">VOLVER A PELEAR</button></div></div></div>
 <div class="touch"><div class="touchgroup"><button data-act="left">◀</button><button data-act="right">▶</button><button data-act="jump">▲</button></div><div class="touchgroup"><button class="attack" data-act="hit">GOLPE</button><button class="special" data-act="special">ESPECIAL</button><button class="guard" data-act="block">DEFENSA</button></div></div>
 <div class="bottom"><div>Objetivo: derrota a Chupacabras antes de que se agote tu vida.</div><div class="keys"><span><b class="key">A</b> <b class="key">D</b> mover</span><span><b class="key">W</b> saltar</span><span><b class="key">J</b> golpear</span><span><b class="key">K</b> especial</span><span><b class="key">L</b> bloquear</span></div></div><div class="note">Acércate para golpear. Mantén L o DEFENSA para reducir el daño; el especial consume energía.</div>
@@ -72,6 +72,8 @@ for(const id of ['bigfoot','chupacabras']){
   spriteSheets[id]=img;
 }
 function spritePose(f){
+  // El daño tiene prioridad visual breve, sin modificar física ni colisiones.
+  if(f.flash>0)return 3;
   if(f.blocking)return 5;
   if(f.attack>0&&f.type==='special')return 4;
   if(f.attack>0)return 3;
@@ -80,12 +82,17 @@ function spritePose(f){
   return 0;
 }
 function spriteAnimationFrame(f,pose){
-  if(pose===1)return Math.floor(frame/5)%4;
-  if(pose===0)return Math.floor(frame/18)%2;
-  if(pose===2)return f.vy<0?1:3;
-  if(pose===3){const elapsed=Math.max(0,14-f.attack);return elapsed<3?0:elapsed<7?1:elapsed<10?2:3;}
+  const t=Math.max(0,f.stateTime||0);
+  if(pose===0)return Math.floor(frame/12)%4;
+  if(pose===1)return Math.floor((f.walk||0)*1.35)%4;
+  if(pose===2)return f.vy< -7?0:f.vy< -1?1:f.vy<4?2:3;
+  if(pose===3){
+    if(f.flash>0)return f.flash>7?3:2;
+    const elapsed=Math.max(0,14-f.attack);
+    return elapsed<3?0:elapsed<6?1:elapsed<10?2:3;
+  }
   if(pose===4){const elapsed=Math.max(0,25-f.attack);return elapsed<5?0:elapsed<10?1:elapsed<17?2:3;}
-  return Math.floor(frame/7)%2;
+  return Math.floor(t/4)%4;
 }
 function drawF(f){
   const sheet=spriteSheets[f.character?.id];
@@ -95,16 +102,28 @@ function drawF(f){
     x.scale(f.face,1);
     const pose=spritePose(f);
     const subframe=spriteAnimationFrame(f,pose);
-    x.drawImage(sheet,pose*128,subframe*160,128,160,-64,-154,128,160);
-    // Brillo de estado conservado sobre los sprites transparentes.
+    // La cuadrícula SVG es de 6 columnas x 4 filas (128 x 160 por celda).
+    // El anclaje común conserva los pies sobre FLOOR en todos los estados.
+    const drawW=f.character?.id==='bigfoot'?132:124;
+    const drawH=f.character?.id==='bigfoot'?160:156;
+    x.drawImage(sheet,pose*128,subframe*160,128,160,-drawW/2,-drawH+4,drawW,drawH);
+    const col=f.character?.id==='bigfoot'?'#ffbc59':'#ff42d0';
     if(f.blocking){
-      x.globalAlpha=.75;x.strokeStyle='#65eaff';x.lineWidth=3;
-      x.beginPath();x.arc(22,-82,31,-1.35,1.05);x.stroke();
+      x.globalAlpha=.82;x.strokeStyle='#65eaff';x.lineWidth=3;
+      x.beginPath();x.arc(20,-82,31+Math.sin(frame*.25)*2,-1.35,1.05);x.stroke();
     }
     if(f.attack>0){
-      const col=f.character.id==='bigfoot'?'#ffbc59':'#ff42d0';
-      x.globalAlpha=.7;x.strokeStyle=col;x.lineWidth=3;
-      x.beginPath();x.arc(48,-78,22+Math.sin(frame*.5)*4,-.9,.9);x.stroke();
+      x.globalAlpha=.78;x.strokeStyle=col;x.lineWidth=f.type==='special'?5:3;
+      x.beginPath();x.arc(43,-78,(f.type==='special'?31:22)+Math.sin(frame*.5)*4,-.9,.9);x.stroke();
+    }
+    if(f.flash>0){
+      // Destello de impacto acotado al personaje; no tapa el HUD ni la arena.
+      x.globalAlpha=Math.min(.5,f.flash/18);
+      x.fillStyle='#fff0f4';x.beginPath();x.ellipse(0,-83,35,53,0,0,Math.PI*2);x.fill();
+    }
+    if(f.land>0){
+      x.globalAlpha=Math.min(.42,f.land/14);x.strokeStyle=col;x.lineWidth=2;
+      x.beginPath();x.ellipse(0,-3,38+f.land,5+f.land*.15,0,0,Math.PI*2);x.stroke();
     }
     x.restore();
     return;
