@@ -226,35 +226,48 @@ function drawF(f){
 function draw(){x.save();if(shake>0){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.82}bg();drawF(p);drawF(e);for(const q of parts){x.globalAlpha=Math.max(0,q.life/q.max);x.fillStyle=q.color;x.shadowColor=q.color;x.shadowBlur=10;x.beginPath();x.arc(q.x,q.y,q.size,0,7);x.fill()}x.shadowBlur=0;x.globalAlpha=1;for(const t of texts){x.globalAlpha=Math.min(1,t.life/12);x.font='900 20px system-ui';x.textAlign='center';x.lineWidth=4;x.strokeStyle='#171025';x.strokeText(t.t,t.x,t.y);x.fillStyle=t.color;x.fillText(t.t,t.x,t.y)}x.globalAlpha=1;x.textAlign='center';x.font='900 12px system-ui';x.fillStyle='#d3c9ff';x.globalAlpha=.65;x.fillText('TEMPLO DEL UMBRAL',480,514);x.globalAlpha=1;x.restore()}
 window.mitosStartCombat=reset;function loop(){update();if(p&&e)draw();requestAnimationFrame(loop)}p=fighter(roster[0],260,0);e=fighter(roster[1],700,1);loop()})();
 </script><script>
-/* Respaldo de navegación: evita que un fallo del juego deje bloqueada la portada. */
+/* Respaldo independiente: llena los selectores aunque falle el script principal. */
 (function(){
-  const start=document.getElementById('start');
-  const select=document.getElementById('select');
-  const selectBtn=document.getElementById('selectBtn');
-  const fightBtn=document.getElementById('fightBtn');
-  if(selectBtn&&start&&select){
-    selectBtn.addEventListener('click',function(){
-      start.hidden=true;
-      select.hidden=false;
-      select.style.display='flex';
-      select.scrollTop=0;
-    });
+  const rosterFallback=[
+    ['bigfoot','Bigfoot','El Rey del Bosque','Norteamérica · Criptozoología','B','#ffbc69'],
+    ['chupacabras','Chupacabras','El Depredador Nocturno','América Latina · Leyenda moderna','C','#ff426e'],
+    ['mothman','Mothman','El Heraldo del Caos','Estados Unidos · Leyenda moderna','M','#ff334f'],
+    ['medusa','Medusa','La Mirada Mortal','Grecia · Mitología','ME','#ffd36a'],
+    ['anubis','Anubis','El Juez de las Almas','Antiguo Egipto · Mitología','A','#53e8ff'],
+    ['quetzalcoatl','Quetzalcóatl','La Serpiente Celestial','Mesoamérica · Tradiciones míticas','Q','#54e8ff'],
+    ['oni','Oni','El Demonio de Hierro','Japón · Folclore','O','#ffd36a'],
+    ['llorona','La Llorona','La Voz del Río','México y Latinoamérica · Folclore','L','#7ddfff'],
+    ['thor','Thor','El Portador del Trueno','Tradición nórdica · Mitología','T','#ffd36a'],
+    ['babayaga','Baba Yaga','La Bruja del Umbral','Europa eslava · Folclore','BY','#b7ff79'],
+    ['kraken','Kraken','El Terror Abisal','Leyendas marítimas europeas','K','#54e8ff'],
+    ['silbon','El Silbón','El Condenado de los Llanos','Venezuela y Colombia · Folclore','S','#d8ff86']
+  ];
+  const player=document.getElementById('playerPick'), rival=document.getElementById('rivalPick');
+  function fill(sel,first){
+    if(!sel)return;
+    if(!sel.options.length){
+      rosterFallback.forEach(function(ch){
+        const opt=document.createElement('option');
+        opt.value=ch[0];opt.textContent=ch[1]+' — '+ch[2];sel.appendChild(opt);
+      });
+    }
+    sel.value=first;
   }
-  if(fightBtn&&start&&select){
-    fightBtn.addEventListener('click',function(){
-      window.setTimeout(function(){
-        if(typeof window.mitosStartCombat==='function' && select.hidden===false){
-          try { window.mitosStartCombat(); } catch(err) {
-            const note=document.querySelector('.bottom>div');
-            if(note) note.textContent='No se pudo iniciar el combate: '+err.message;
-          }
-        }
-      },0);
-    });
+  fill(player,'bigfoot');fill(rival,'chupacabras');
+  function updateInfo(sel,prefix){
+    if(!sel)return;
+    const ch=rosterFallback.find(function(item){return item[0]===sel.value})||rosterFallback[0];
+    const sigil=document.getElementById(prefix+'Sigil'),name=document.getElementById(prefix+'Name'),desc=document.getElementById(prefix+'Desc');
+    if(sigil){sigil.textContent=ch[4];sigil.style.setProperty('--sigil',ch[5]);}
+    if(name)name.textContent=ch[1]+' · '+ch[2];
+    if(desc)desc.textContent=ch[3];
   }
+  if(player){player.addEventListener('change',function(){updateInfo(player,'player')});updateInfo(player,'player');}
+  if(rival){rival.addEventListener('change',function(){updateInfo(rival,'rival')});updateInfo(rival,'rival');}
+  const start=document.getElementById('start'),select=document.getElementById('select'),selectBtn=document.getElementById('selectBtn');
+  if(selectBtn&&start&&select)selectBtn.addEventListener('click',function(){start.hidden=true;start.style.display='none';select.hidden=false;select.style.display='flex';select.style.visibility='visible';select.scrollTop=0;});
   window.addEventListener('error',function(ev){
     const note=document.querySelector('.bottom>div');
-    if(note) note.textContent='Aviso técnico: '+(ev.message||'error de ejecución')+'. Recarga la página para volver a intentarlo.';
+    if(note)note.textContent='Aviso técnico: '+(ev.message||'error de ejecución');
   });
-})();
-</script></body></html>
+})();</script></body></html>
