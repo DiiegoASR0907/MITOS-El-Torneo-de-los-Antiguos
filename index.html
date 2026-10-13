@@ -71,7 +71,7 @@ for(const id of ['bigfoot','chupacabras']){
   img.src='assets/sprites/'+id+'.svg';
   spriteSheets[id]=img;
 }
-function spriteFrame(f){
+function spritePose(f){
   if(state==='block')return 5;
   if(f.attack>0&&f.type==='special')return 4;
   if(f.attack>0)return 3;
@@ -79,14 +79,23 @@ function spriteFrame(f){
   if(Math.abs(f.vx)>.8)return 1;
   return 0;
 }
+function spriteAnimationFrame(f,pose){
+  if(pose===1)return Math.floor(frame/5)%4;
+  if(pose===0)return Math.floor(frame/18)%2;
+  if(pose===2)return f.vy<0?1:3;
+  if(pose===3){const elapsed=Math.max(0,14-f.attack);return elapsed<3?0:elapsed<7?1:elapsed<10?2:3;}
+  if(pose===4){const elapsed=Math.max(0,25-f.attack);return elapsed<5?0:elapsed<10?1:elapsed<17?2:3;}
+  return Math.floor(frame/7)%2;
+}
 function drawF(f){
   const sheet=spriteSheets[f.character?.id];
   if(sheet&&sheet.complete&&sheet.naturalWidth){
     x.save();
     x.translate(f.x,f.y);
     x.scale(f.face,1);
-    const cell=spriteFrame(f);
-    x.drawImage(sheet,cell*128,0,128,160,-64,-154,128,160);
+    const pose=spritePose(f);
+    const subframe=spriteAnimationFrame(f,pose);
+    x.drawImage(sheet,pose*128,subframe*160,128,160,-64,-154,128,160);
     // Brillo de estado conservado sobre los sprites transparentes.
     if(state==='block'){
       x.globalAlpha=.75;x.strokeStyle='#65eaff';x.lineWidth=3;
