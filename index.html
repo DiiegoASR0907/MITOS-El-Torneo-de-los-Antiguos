@@ -224,4 +224,38 @@ function drawF(f){
 }
 function draw(){x.save();if(shake>0){x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.82}bg();drawF(p);drawF(e);for(const q of parts){x.globalAlpha=Math.max(0,q.life/q.max);x.fillStyle=q.color;x.shadowColor=q.color;x.shadowBlur=10;x.beginPath();x.arc(q.x,q.y,q.size,0,7);x.fill()}x.shadowBlur=0;x.globalAlpha=1;for(const t of texts){x.globalAlpha=Math.min(1,t.life/12);x.font='900 20px system-ui';x.textAlign='center';x.lineWidth=4;x.strokeStyle='#171025';x.strokeText(t.t,t.x,t.y);x.fillStyle=t.color;x.fillText(t.t,t.x,t.y)}x.globalAlpha=1;x.textAlign='center';x.font='900 12px system-ui';x.fillStyle='#d3c9ff';x.globalAlpha=.65;x.fillText('TEMPLO DEL UMBRAL',480,514);x.globalAlpha=1;x.restore()}
 function loop(){update();if(p&&e)draw();requestAnimationFrame(loop)}p=fighter(roster[0],260,0);e=fighter(roster[1],700,1);loop()})();
+</script><script>
+/* Respaldo de navegación: evita que un fallo del juego deje bloqueada la portada. */
+(function(){
+  const start=document.getElementById('start');
+  const select=document.getElementById('select');
+  const selectBtn=document.getElementById('selectBtn');
+  const fightBtn=document.getElementById('fightBtn');
+  if(selectBtn&&start&&select){
+    selectBtn.addEventListener('click',function(){
+      start.hidden=true;
+      select.hidden=false;
+      select.style.display='flex';
+      select.scrollTop=0;
+    });
+  }
+  if(fightBtn&&start&&select){
+    fightBtn.addEventListener('click',function(){
+      // La función principal reset() se encarga de inicializar el combate.
+      // Este respaldo solo asegura que el panel no bloquee la arena.
+      window.setTimeout(function(){
+        if(select.hidden===false){
+          select.hidden=true;
+          start.hidden=true;
+          const canvas=document.getElementById('game');
+          if(canvas) canvas.style.visibility='visible';
+        }
+      },80);
+    });
+  }
+  window.addEventListener('error',function(ev){
+    const note=document.querySelector('.bottom>div');
+    if(note) note.textContent='Aviso técnico: '+(ev.message||'error de ejecución')+'. Recarga la página para volver a intentarlo.';
+  });
+})();
 </script></body></html>
