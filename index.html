@@ -282,4 +282,30 @@ window.mitosStartCombat=reset;function loop(){update();if(p&&e)draw();requestAni
     const note=document.querySelector('.bottom>div');
     if(note)note.textContent='Aviso técnico: '+(ev.message||'error de ejecución');
   });
-})();</script></body></html>
+})();</script>
+<script>
+/* Vigilante independiente del final: no depende del bucle principal del Canvas. */
+(function(){
+  let shown=false;
+  function checkEnd(){
+    try{
+      const end=document.getElementById('end'), h1=document.getElementById('hp1'), h2=document.getElementById('hp2');
+      if(!end||!h1||!h2){requestAnimationFrame(checkEnd);return;}
+      const readHP=el=>{const w=(el.style.width||'').trim();if(w.endsWith('%'))return parseFloat(w);const parent=el.parentElement;return parent&&parent.clientWidth?100*el.getBoundingClientRect().width/parent.clientWidth:100;};
+      const a=readHP(h1),b=readHP(h2);
+      if(!shown&&(a<=0.1||b<=0.1)){
+        shown=true;
+        const pName=(document.getElementById('hud1')?.textContent||'Tu luchador').trim();
+        const eName=(document.getElementById('hud2')?.textContent||'Rival').trim();
+        const won=a>b;
+        document.getElementById('winner').textContent=won?'¡VICTORIA!':'DERROTA';
+        document.getElementById('result').textContent=won?pName+' ha defendido la arena. La leyenda continúa…':eName+' domina esta ronda. ¡Vuelve a intentarlo!';
+        end.hidden=false;end.style.display='flex';end.style.visibility='visible';end.style.zIndex='1000';
+      }
+      if(a>0.1&&b>0.1)shown=false;
+    }catch(err){/* el vigilante nunca debe detener el juego */}
+    requestAnimationFrame(checkEnd);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(checkEnd));else requestAnimationFrame(checkEnd);
+})();
+</script></body></html>
